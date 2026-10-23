@@ -2,6 +2,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, NavLink, useParams } from "react-router-dom";
 import "./App.css";
+import OpportunityExplorer from "./components/OpportunityExplorer";
 
 const internships = [
   {
@@ -57,18 +58,56 @@ const internships = [
 function Home() {
   return (
     <main className="page hero">
-      <p className="eyebrow">YOUR CAREER STARTS HERE</p>
-      <h1>Find your first opportunity with SkillBridge Lite.</h1>
+      <p className="eyebrow">YOUR SKILLS + OUR BRIDGE = YOUR FUTURE</p>
+
+      <h1>
+        Find Your Dream Internship with{" "}
+        <span className="hero-highlight">SkillBridge Lite.</span>
+      </h1>
+
       <p>
-        Discover internship opportunities, explore new skills, and take
-        your next step toward a career you love.
+        Discover exciting internship opportunities, build real-world skills,
+        and take your first step toward a career you love.
       </p>
+
       <NavLink to="/listings" className="primary-link">
-        Explore Internships →
+        Explore Internships <span aria-hidden="true">→</span>
       </NavLink>
+
+      <div className="hero-art" aria-label="Learning and career illustration">
+        <div className="art-orbit"></div>
+        <div className="art-sparkle sparkle-one">✦</div>
+        <div className="art-sparkle sparkle-two">✧</div>
+
+        <div className="art-main-icon" aria-hidden="true">
+          <span className="art-cap">🎓</span>
+          <span className="art-laptop">💻</span>
+        </div>
+
+        <div className="art-bubble bubble-learn">
+          <span>💡</span>
+          <div>
+            <strong>Learn</strong>
+            <small>New skills</small>
+          </div>
+        </div>
+
+        <div className="art-bubble bubble-grow">
+          <span>🌱</span>
+          <div>
+            <strong>Grow</strong>
+            <small>Your future</small>
+          </div>
+        </div>
+
+        <div className="art-caption">
+          <span>✨</span> Small steps. Big dreams.
+        </div>
+      </div>
     </main>
   );
 }
+
 
 function Listings() {
   return (
@@ -138,8 +177,45 @@ function ListingDetails() {
 
 function Apply() {
   const { id } = useParams();
-  const internship = internships.find((item) => item.id === id);
+  
 
+  const [internship, setInternship] = React.useState(null);
+  const [internshipLoading, setInternshipLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadInternship() {
+      try {
+        const response = await fetch(
+          `http://localhost:3001/opportunities/${id}`,
+          { signal: controller.signal }
+        );
+
+        if (!response.ok) {
+          throw new Error("Internship not found");
+        }
+
+        const data = await response.json();
+        setInternship(data);
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          const fallback = internships.find(
+            (item) => String(item.id) === String(id)
+          );
+          setInternship(fallback || null);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setInternshipLoading(false);
+        }
+      }
+    }
+
+    loadInternship();
+
+    return () => controller.abort();
+  }, [id]);
   const [formData, setFormData] = React.useState({
     name: "",
     email: "",
@@ -192,6 +268,14 @@ function Apply() {
       setSubmitted(true);
     }
   }
+    if (internshipLoading) {
+    return (
+      <main className="page">
+        <h1>Loading internship...</h1>
+        <p>Please wait a moment.</p>
+      </main>
+    );
+  }
 
   if (!internship) {
     return (
@@ -204,6 +288,24 @@ function Apply() {
       </main>
     );
   }
+  if (internshipLoading) {
+  return (
+    <main className="page">
+      <h1>Loading internship...</h1>
+      <p>Please wait while we load the application form.</p>
+    </main>
+  );
+}
+
+if (!internship) {
+  return (
+    <main className="page">
+      <h1>Internship Not Found</h1>
+      <p>This internship could not be found.</p>
+      <NavLink to="/explorer">Back to Explorer</NavLink>
+    </main>
+  );
+}
 
   return (
     <main className="page">
@@ -312,19 +414,21 @@ function App() {
         </NavLink>
 
         <nav aria-label="Main navigation">
-          <NavLink to="/" end>Home</NavLink>
-          <NavLink to="/listings">Listings</NavLink>
-          <NavLink to="/apply/1">Apply</NavLink>
-        </nav>
+  <NavLink to="/" end>Home</NavLink>
+  <NavLink to="/listings">Listings</NavLink>
+  <NavLink to="/explorer">Explorer</NavLink>
+  <NavLink to="/apply/1">Apply</NavLink>
+</nav>
       </header>
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/listings" element={<Listings />} />
-        <Route path="/listings/:id" element={<ListingDetails />} />
-        <Route path="/apply/:id" element={<Apply />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+     <Routes>
+  <Route path="/" element={<Home />} />
+  <Route path="/listings" element={<Listings />} />
+  <Route path="/listings/:id" element={<ListingDetails />} />
+  <Route path="/apply/:id" element={<Apply />} />
+  <Route path="/explorer" element={<OpportunityExplorer />} />
+  <Route path="*" element={<NotFound />} />
+</Routes>
     </BrowserRouter>
   );
 }

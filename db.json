@@ -1,0 +1,149 @@
+
+{
+  "opportunities": [
+    {
+      "id": 1,
+      "title": "Frontend Developer Intern",
+      "company": "PixelCraft Studio",
+      "category": "Development",
+      "location": "Remote",
+      "type": "Internship",
+      "stipend": "$300/month",
+      "description": "Build responsive websites using HTML, CSS and React.",
+      "icon": "💻",
+      "color": "#eee8ff"
+    },
+    {
+      "id": 2,
+      "title": "UI/UX Design Intern",
+      "company": "Creative Minds",
+      "category": "Design",
+      "location": "Hybrid",
+      "type": "Internship",
+      "stipend": "$250/month",
+      "description": "Create beautiful user interfaces and interactive prototypes.",
+      "icon": "🎨",
+      "color": "#ffe7f1"
+    },
+    {
+      "id": 3,
+      "title": "Digital Marketing Intern",
+      "company": "Growthify",
+      "category": "Marketing",
+      "location": "Remote",
+      "type": "Internship",
+      "stipend": "$200/month",
+      "description": "Help brands grow through content and social media campaigns.",
+      "icon": "📈",
+      "color": "#e2f8ed"
+    },
+    {
+      "id": 4,
+      "title": "React Developer Intern",
+      "company": "CodeNest",
+      "category": "Development",
+      "location": "Remote",
+      "type": "Internship",
+      "stipend": "$350/month",
+      "description": "Learn component-based development and modern React hooks.",
+      "icon": "⚛️",
+      "color": "#e3f3ff"
+    },
+    {
+      "id": 5,
+      "title": "Graphic Design Intern",
+      "company": "Artistry Lab",
+      "category": "Design",
+      "location": "On-site",
+      "type": "Internship",
+      "stipend": "$220/month",
+      "description": "Design visual assets, brand identities and social media posts.",
+      "icon": "🖌️",
+      "color": "#fff0dc"
+    },
+    {
+      "id": 6,
+      "title": "Content Writing Intern",
+      "company": "WordBloom",
+      "category": "Writing",
+      "location": "Remote",
+      "type": "Internship",
+      "stipend": "$180/month",
+      "description": "Write engaging articles, website copy and blog posts.",
+      "icon": "✍️",
+      "color": "#f1e7ff"
+    },
+    {
+      "id": 7,
+      "title": "Backend Developer Intern",
+      "company": "TechBridge",
+      "category": "Development",
+      "location": "Hybrid",
+      "type": "Internship",
+      "stipend": "$320/month",
+      "description": "Explore APIs, databases and server-side application development.",
+      "icon": "🧩",
+      "color": "#e2f8ed"
+    },
+    {
+      "id": 8,
+      "title": "Social Media Marketing Intern",
+      "company": "BuzzBerry",
+      "category": "Marketing",
+      "location": "Remote",
+      "type": "Internship",
+      "stipend": "$210/month",
+      "description": "Plan social campaigns and measure audience engagement.",
+      "icon": "📱",
+      "color": "#ffe7f1"
+    },
+    {
+      "id": 9,
+      "title": "Product Design Intern",
+      "company": "Nova Labs",
+      "category": "Design",
+      "location": "Hybrid",
+      "type": "Internship",
+      "stipend": "$280/month",
+      "description": "Support product discovery, wireframes and usability testing.",
+      "icon": "✨",
+      "color": "#e3f3ff"
+    },
+    {
+      "id": 10,
+      "title": "Junior Web Developer",
+      "company": "LaunchPad",
+      "category": "Development",
+      "location": "Remote",
+      "type": "Entry-level",
+      "stipend": "$500/month",
+      "description": "Contribute to real client projects with a supportive team.",
+      "icon": "🚀",
+      "color": "#eee8ff"
+    },
+    {
+      "id": 11,
+      "title": "SEO Content Intern",
+      "company": "SearchSpring",
+      "category": "Writing",
+      "location": "Remote",
+      "type": "Internship",
+      "stipend": "$190/month",
+      "description": "Research keywords and improve content discoverability.",
+      "icon": "🔎",
+      "color": "#fff0dc"
+    },
+    {
+      "id": 12,
+      "title": "Brand Identity Designer",
+      "company": "Studio Aura",
+      "category": "Design",
+      "location": "On-site",
+      "type": "Entry-level",
+      "stipend": "$400/month",
+      "description": "Create memorable brand systems, logos and visual guidelines.",
+      "icon": "💜",
+      "color": "#f1e7ff"
+    }
+  ]
+}
