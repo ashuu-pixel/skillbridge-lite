@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 
-const API_URL = "http://localhost:3001/opportunities";
+const API_URL = "/opportunities.json";
 
 export default function useOpportunities() {
   const [opportunities, setOpportunities] = useState([]);

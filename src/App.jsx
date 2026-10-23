@@ -182,29 +182,38 @@ function Apply() {
   const [internship, setInternship] = React.useState(null);
   const [internshipLoading, setInternshipLoading] = React.useState(true);
 
-  React.useEffect(() => {
+   React.useEffect(() => {
     const controller = new AbortController();
 
     async function loadInternship() {
       try {
-        const response = await fetch(
-          `http://localhost:3001/opportunities/${id}`,
-          { signal: controller.signal }
-        );
+        const response = await fetch("/opportunities.json", {
+          signal: controller.signal,
+        });
 
         if (!response.ok) {
-          throw new Error("Internship not found");
+          throw new Error("Unable to load internships");
         }
 
         const data = await response.json();
-        setInternship(data);
-      } catch (error) {
-        if (error.name !== "AbortError") {
-          const fallback = internships.find(
-            (item) => String(item.id) === String(id)
-          );
-          setInternship(fallback || null);
+
+        if (!Array.isArray(data)) {
+          throw new Error("Invalid internship data");
         }
+
+        const found = data.find(
+          (item) => String(item.id) === String(id)
+        );
+
+        setInternship(found || null);
+      } catch (error) {
+        if (error.name === "AbortError") return;
+
+        const fallback = internships.find(
+          (item) => String(item.id) === String(id)
+        );
+
+        setInternship(fallback || null);
       } finally {
         if (!controller.signal.aborted) {
           setInternshipLoading(false);
@@ -216,6 +225,7 @@ function Apply() {
 
     return () => controller.abort();
   }, [id]);
+
   const [formData, setFormData] = React.useState({
     name: "",
     email: "",
@@ -288,24 +298,6 @@ function Apply() {
       </main>
     );
   }
-  if (internshipLoading) {
-  return (
-    <main className="page">
-      <h1>Loading internship...</h1>
-      <p>Please wait while we load the application form.</p>
-    </main>
-  );
-}
-
-if (!internship) {
-  return (
-    <main className="page">
-      <h1>Internship Not Found</h1>
-      <p>This internship could not be found.</p>
-      <NavLink to="/explorer">Back to Explorer</NavLink>
-    </main>
-  );
-}
 
   return (
     <main className="page">
