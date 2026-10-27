@@ -128,7 +128,7 @@ export default function OpportunityExplorer() {
           </label>
         </section>
 
-        <div className="results-heading">
+        <div className="results-heading" aria-live="polite" aria-atomic="true">
           <div>
             <h2>Explore opportunities <span>✦</span></h2>
             <p>

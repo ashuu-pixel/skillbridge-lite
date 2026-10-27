@@ -27,12 +27,13 @@ export default function useOpportunities() {
         }
 
         const data = await response.json();
+const list = Array.isArray(data) ? data : data.opportunities;
 
-        if (!Array.isArray(data)) {
-          throw new Error("The API returned an invalid response.");
-        }
+if (!Array.isArray(list)) {
+  throw new Error("The API returned an invalid response.");
+}
 
-        setOpportunities(data);
+setOpportunities(list);
       } catch (err) {
         if (err.name === "AbortError") return;
 
