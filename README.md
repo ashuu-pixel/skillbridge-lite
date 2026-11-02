@@ -63,3 +63,23 @@ This is a front-end demonstration project. Application submissions are simulated
 - User authentication
 - Database storage
 - Internship search and filtering
+
+## Accessibility Improvements
+
+SkillBridge Explorer includes accessibility improvements to support keyboard users and screen readers.
+
+- Added visible keyboard focus indicators for buttons, links, search inputs, and dropdowns.
+- Added reduced-motion support for users who prefer less animation.
+- Added accessible labels for search and category controls.
+- Added a live region to announce changes in opportunity results.
+- Added a loading status announcement for screen readers.
+- Used form labels and validation messages to help users complete the application form.
+
+### Accessibility Testing
+
+- Lighthouse Accessibility score: 100/100 (recorded test result).
+- axe DevTools: No violations reported in the test performed.
+- Keyboard navigation: Tested using the Tab key.
+- Search, category filtering, and pagination: Checked manually.
+
+**Note:** Accessibility results may vary with future code changes. Run the tests again before release.
