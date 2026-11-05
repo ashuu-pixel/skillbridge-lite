@@ -1,61 +1,68 @@
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
 
-const internships = [
-  { id: "1", title: "Frontend Developer Intern", company: "PixelCraft Studio", location: "Remote", description: "Learn to build responsive websites using HTML, CSS, JavaScript, and React." },
-  { id: "2", title: "UI/UX Design Intern", company: "CreativeNest", location: "Islamabad, Pakistan", description: "Help design user-friendly interfaces, wireframes, and prototypes." },
-  { id: "3", title: "React Developer Intern", company: "TechNova", location: "Remote", description: "Practice React components, hooks, routing, and reusable UI development." },
-  { id: "4", title: "Web Development Intern", company: "CodeSpring", location: "Lahore, Pakistan", description: "Work on real-world web layouts and learn modern development workflows." },
-  { id: "5", title: "Digital Marketing Intern", company: "BrightPath Media", location: "Remote", description: "Explore social media campaigns, content planning, and digital analytics." },
-  { id: "6", title: "Python Developer Intern", company: "DataBridge Labs", location: "Karachi, Pakistan", description: "Build programming fundamentals and explore Python-based applications." }
-];
+const API_URL = "/opportunities.json";
 
 export default function Apply() {
   const { id } = useParams();
 
   const [internship, setInternship] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "",
     message: ""
   });
+
   const [errors, setErrors] = useState({});
-  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
 
     async function loadInternship() {
       try {
-        const response = await fetch("/opportunities.json", {
+        setLoading(true);
+        setLoadError("");
+
+        const response = await fetch(API_URL, {
           signal: controller.signal
         });
 
         if (!response.ok) {
-          throw new Error("Unable to load internships");
+          throw new Error("Unable to load opportunities.");
         }
 
         const data = await response.json();
 
-        if (!Array.isArray(data)) {
-          throw new Error("Invalid internship data");
+        const list = Array.isArray(data)
+          ? data
+          : data.opportunities;
+
+        if (!Array.isArray(list)) {
+          throw new Error("Invalid opportunity data.");
         }
 
-        const found = data.find(
+        const found = list.find(
           item => String(item.id) === String(id)
         );
 
-        setInternship(found || null);
-      } catch (error) {
-        if (error.name === "AbortError") return;
+        if (!found) {
+          throw new Error("Opportunity not found.");
+        }
 
-        const fallback = internships.find(
-          item => String(item.id) === String(id)
-        );
+        setInternship(found);
 
-        setInternship(fallback || null);
+      } catch {
+        if (error.name !== "AbortError") {
+          setLoadError(error.message);
+        }
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -81,7 +88,7 @@ export default function Apply() {
       [name]: ""
     }));
 
-    setSubmitted(false);
+    setSubmitError("");
   }
 
   function handleSubmit(event) {
@@ -94,40 +101,98 @@ export default function Apply() {
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Please enter your email address.";
+      newErrors.email = "Please enter your email.";
     } else if (
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())
     ) {
       newErrors.email = "Please enter a valid email address.";
     }
 
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Please enter your phone number.";
+    } else if (!/^[+]?[0-9\s-]{7,15}$/.test(formData.phone.trim())) {
+      newErrors.phone = "Please enter a valid phone number.";
+    }
+
     if (!formData.message.trim()) {
-      newErrors.message = "Please tell us a little about yourself.";
+      newErrors.message = "Please tell us about yourself.";
     }
 
     setErrors(newErrors);
+    setSubmitted(false);
+    setSubmitError("");
 
-    if (Object.keys(newErrors).length === 0) {
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const existing = JSON.parse(
+        localStorage.getItem("skillbridge-applications") || "[]"
+      );
+
+      if (!Array.isArray(existing)) {
+        throw new Error("Invalid saved application data.");
+      }
+
+      const application = {
+        id: String(Date.now()),
+        opportunityId: internship.id,
+        opportunityTitle: internship.title,
+        title: internship.title,
+        company: internship.company,
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        message: formData.message.trim(),
+        date: new Date().toISOString(),
+        status: "Submitted"
+      };
+
+      localStorage.setItem(
+        "skillbridge-applications",
+        JSON.stringify([...existing, application])
+      );
+
       setSubmitted(true);
+
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        message: ""
+      });
+
+    } catch (error) {
+      setSubmitError(
+        "Unable to save your application. Please try again."
+      );
+    } finally {
+      setSubmitting(false);
     }
   }
 
   if (loading) {
     return (
       <main className="page">
-        <h1>Loading internship...</h1>
+        <h1>Loading opportunity...</h1>
         <p>Please wait a moment.</p>
       </main>
     );
   }
 
-  if (!internship) {
+  if (loadError || !internship) {
     return (
       <main className="page">
-        <h1>Internship Not Found</h1>
-        <p>Please select an internship before applying.</p>
-        <NavLink to="/listings" className="primary-link">
-          Browse Internships
+        <h1>Opportunity Not Found</h1>
+        <p role="alert">
+          {loadError || "This opportunity does not exist."}
+        </p>
+
+        <NavLink to="/opportunities" className="primary-link">
+          Browse Opportunities
         </NavLink>
       </main>
     );
@@ -136,7 +201,8 @@ export default function Apply() {
   return (
     <main className="page">
       <p className="eyebrow">TAKE YOUR NEXT STEP</p>
-      <h1>Apply for an Internship</h1>
+
+      <h1>Apply for an Opportunity</h1>
 
       <p className="intro-text">
         Applying for <strong>{internship.title}</strong> at{" "}
@@ -150,6 +216,7 @@ export default function Apply() {
             id="name"
             name="name"
             type="text"
+            autoComplete="name"
             placeholder="Enter your full name"
             value={formData.name}
             onChange={handleChange}
@@ -169,6 +236,7 @@ export default function Apply() {
             id="email"
             name="email"
             type="email"
+            autoComplete="email"
             placeholder="you@example.com"
             value={formData.email}
             onChange={handleChange}
@@ -178,6 +246,26 @@ export default function Apply() {
           {errors.email && (
             <p className="error-message" id="email-error" role="alert">
               {errors.email}
+            </p>
+          )}
+        </div>
+
+        <div className="form-field">
+          <label htmlFor="phone">Phone Number</label>
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            autoComplete="tel"
+            placeholder="+92 300 1234567"
+            value={formData.phone}
+            onChange={handleChange}
+            aria-invalid={Boolean(errors.phone)}
+            aria-describedby={errors.phone ? "phone-error" : undefined}
+          />
+          {errors.phone && (
+            <p className="error-message" id="phone-error" role="alert">
+              {errors.phone}
             </p>
           )}
         </div>
@@ -201,20 +289,40 @@ export default function Apply() {
           )}
         </div>
 
-        <button type="submit" className="primary-link form-button">
-          Submit Application →
+        {submitError && (
+          <p className="error-message" role="alert">
+            {submitError}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          className="primary-link form-button"
+          disabled={submitting}
+        >
+          {submitting ? "Submitting..." : "Submit Application →"}
         </button>
 
         {submitted && (
           <div className="success-message" role="status" aria-live="polite">
-            <strong>Application completed successfully!</strong>
+            <strong>Application submitted successfully!</strong>
             <p>
-              This is a demo confirmation. Your application has not been
-              sent to a server.
+              Your application has been saved in this browser.
+              It has not been sent to a real organization.
             </p>
+            <NavLink to="/my-applications">
+              View My Applications →
+            </NavLink>
           </div>
         )}
       </form>
+
+      <p>
+        <small>
+          Demo notice: This is a frontend simulation. No real backend or
+          organization submission is connected.
+        </small>
+      </p>
     </main>
   );
 }

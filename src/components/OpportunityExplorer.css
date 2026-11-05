@@ -1205,3 +1205,53 @@
     transition: none !important;
   }
 }
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.details-button,
+.apply-button {
+  flex: 1;
+  min-height: 44px;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.details-button {
+  background: #f0eaff;
+  color: #7046c8;
+}
+
+.details-button:hover {
+  background: #e3d5ff;
+  transform: translateY(-2px);
+}
+
+.card-actions .apply-button {
+  margin-top: 0;
+}
+
+.details-button:focus-visible,
+.card-actions .apply-button:focus-visible {
+  outline: 3px solid #7046c8;
+  outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+  .card-actions {
+    flex-direction: column;
+  }
+
+  .card-actions button {
+    width: 100%;
+  }
+}

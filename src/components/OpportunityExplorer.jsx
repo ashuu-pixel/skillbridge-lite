@@ -190,13 +190,23 @@ export default function OpportunityExplorer() {
                       <strong>{item.stipend}</strong>
                     </div>
 
-                    <button
-                      type="button"
-                      className="apply-button"
-                      onClick={() => navigate(`/apply/${item.id}`)}
-                    >
-                      Apply <span>↗</span>
-                    </button>
+<div className="card-actions">
+  <button
+    type="button"
+    className="details-button"
+    onClick={() => navigate(`/opportunities/${item.id}`)}
+  >
+    View Details
+  </button>
+
+  <button
+    type="button"
+    className="apply-button"
+    onClick={() => navigate(`/opportunities/${item.id}/apply`)}
+  >
+    Apply <span>↗</span>
+  </button>
+</div>
                   </div>
                 </article>
               ))}

@@ -4,59 +4,15 @@ import {
   BrowserRouter,
   Routes,
   Route,
-  NavLink,
-  useParams
+  NavLink
 } from "react-router-dom";
 
 import "./App.css";
 import OpportunityExplorer from "./components/OpportunityExplorer";
 
 const Apply = lazy(() => import("./pages/Apply"));
-
-const internships = [
-  {
-    id: "1",
-    title: "Frontend Developer Intern",
-    company: "PixelCraft Studio",
-    location: "Remote",
-    description: "Learn to build responsive websites using HTML, CSS, JavaScript, and React."
-  },
-  {
-    id: "2",
-    title: "UI/UX Design Intern",
-    company: "CreativeNest",
-    location: "Islamabad, Pakistan",
-    description: "Help design user-friendly interfaces, wireframes, and prototypes."
-  },
-  {
-    id: "3",
-    title: "React Developer Intern",
-    company: "TechNova",
-    location: "Remote",
-    description: "Practice React components, hooks, routing, and reusable UI development."
-  },
-  {
-    id: "4",
-    title: "Web Development Intern",
-    company: "CodeSpring",
-    location: "Lahore, Pakistan",
-    description: "Work on real-world web layouts and learn modern development workflows."
-  },
-  {
-    id: "5",
-    title: "Digital Marketing Intern",
-    company: "BrightPath Media",
-    location: "Remote",
-    description: "Explore social media campaigns, content planning, and digital analytics."
-  },
-  {
-    id: "6",
-    title: "Python Developer Intern",
-    company: "DataBridge Labs",
-    location: "Karachi, Pakistan",
-    description: "Build programming fundamentals and explore Python-based applications."
-  }
-];
+const MyApplications = lazy(() => import("./pages/MyApplications"));
+const OpportunityDetail = lazy(() => import("./pages/OpportunityDetail"));
 
 function Home() {
   return (
@@ -73,8 +29,8 @@ function Home() {
         and take your first step toward a career you love.
       </p>
 
-      <NavLink to="/listings" className="primary-link">
-        Explore Internships <span aria-hidden="true">→</span>
+      <NavLink to="/opportunities" className="primary-link">
+        Explore Opportunities →
       </NavLink>
 
       <div className="hero-art" aria-label="Learning and career illustration">
@@ -111,71 +67,6 @@ function Home() {
   );
 }
 
-function Listings() {
-  return (
-    <main className="page">
-      <p className="eyebrow">EXPLORE OPPORTUNITIES</p>
-      <h1>Internship Listings</h1>
-      <p className="intro-text">
-        Find an opportunity that matches your interests.
-      </p>
-
-      <section className="listing-grid" aria-label="Available internships">
-        {internships.map((internship) => (
-          <article className="internship-card" key={internship.id}>
-            <span className="card-label">INTERNSHIP</span>
-            <h2>{internship.title}</h2>
-            <p className="company">{internship.company}</p>
-            <p className="location">📍 {internship.location}</p>
-            <p>{internship.description}</p>
-            <NavLink
-              to={`/listings/${internship.id}`}
-              className="card-link"
-            >
-              View Details →
-            </NavLink>
-          </article>
-        ))}
-      </section>
-    </main>
-  );
-}
-
-function ListingDetails() {
-  const { id } = useParams();
-  const internship = internships.find((item) => item.id === id);
-
-  if (!internship) {
-    return (
-      <main className="page">
-        <h1>Internship Not Found</h1>
-        <p>Sorry, this internship does not exist.</p>
-        <NavLink to="/listings" className="primary-link">
-          Back to Listings
-        </NavLink>
-      </main>
-    );
-  }
-
-  return (
-    <main className="page details-card">
-      <p className="eyebrow">INTERNSHIP DETAILS</p>
-      <h1>{internship.title}</h1>
-      <h2>{internship.company}</h2>
-      <p>📍 {internship.location}</p>
-      <p>{internship.description}</p>
-      <NavLink to={`/apply/${internship.id}`} className="primary-link">
-        Apply for This Internship →
-      </NavLink>
-      <p>
-        <NavLink to="/listings" className="text-link">
-          ← Back to all internships
-        </NavLink>
-      </p>
-    </main>
-  );
-}
-
 function NotFound() {
   return (
     <main className="page">
@@ -198,27 +89,46 @@ function App() {
 
         <nav aria-label="Main navigation">
           <NavLink to="/" end>Home</NavLink>
-          <NavLink to="/listings">Listings</NavLink>
-          <NavLink to="/explorer">Explorer</NavLink>
-          <NavLink to="/apply/1">Apply</NavLink>
+          <NavLink to="/opportunities">Explore</NavLink>
+          <NavLink to="/my-applications">My Applications</NavLink>
         </nav>
       </header>
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/listings" element={<Listings />} />
-        <Route path="/listings/:id" element={<ListingDetails />} />
 
         <Route
-          path="/apply/:id"
+          path="/opportunities"
+          element={<OpportunityExplorer />}
+        />
+
+        <Route
+          path="/opportunities/:id"
           element={
-            <Suspense fallback={<main className="page"><h1>Loading application form...</h1></main>}>
+            <Suspense fallback={<main className="page">Loading details...</main>}>
+              <OpportunityDetail />
+            </Suspense>
+          }
+        />
+
+        <Route
+          path="/opportunities/:id/apply"
+          element={
+            <Suspense fallback={<main className="page">Loading form...</main>}>
               <Apply />
             </Suspense>
           }
         />
 
-        <Route path="/explorer" element={<OpportunityExplorer />} />
+        <Route
+          path="/my-applications"
+          element={
+            <Suspense fallback={<main className="page">Loading applications...</main>}>
+              <MyApplications />
+            </Suspense>
+          }
+        />
+
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
